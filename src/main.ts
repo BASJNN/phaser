@@ -10,8 +10,8 @@ const config = {
 	dom: {
 		createContainer: true
 	},
-	width: 640,
-	height: 512,
+	width: 800,
+	height: 600,
 	physics: {
 		default: 'arcade',
 		arcade: {
