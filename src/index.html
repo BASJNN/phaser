@@ -68,7 +68,7 @@
 
             function create() {
                 this.add.image(400, 300, "parkett");
-                scoreText = this.add.text(500, 16, "score: 0", {
+                scoreText = this.add.text(550, 550, "0 Pizzas", {
                     fontSize: "32px",
                     fill: "#000",
                 });
@@ -300,8 +300,7 @@
                 if (!isTeig && !isKaese) {
                     teig.disableBody(true, true);
                     pickItem.play();
-                    score += 10;
-                    scoreText.setText("Teig: " + score);
+
                     if (isFertig()) {
                         teig.destroy();
                     }
@@ -335,6 +334,8 @@
 
             function pizzaAbgeben() {
                 if (isFertig()) {
+                    score += 1;
+                    scoreText.setText(score + " Pizzas");
                     isTeig = false;
                     isTomato = false;
                     isSalami = false;
