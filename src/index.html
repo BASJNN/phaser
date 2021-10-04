@@ -31,6 +31,8 @@
             var isKaese = false;
             var isTeig = false;
             var isTomato = false;
+            var scoreText;
+            var score = 0;
 
             var pizzaStep = 0;
             var pickItem;
@@ -38,7 +40,6 @@
             var dropItem;
 
             function preload() {
-                // this.load.setBaseURL('http://localhost:8080');
                 this.load.image("ofen", "assets/Ofen.png");
                 this.load.image("tischempty", "assets/tisch_leer.png");
                 this.load.image("tischteig", "assets/TischMitPizzaLeer.png");
@@ -67,6 +68,10 @@
 
             function create() {
                 this.add.image(400, 300, "parkett");
+                scoreText = this.add.text(500, 16, "score: 0", {
+                    fontSize: "32px",
+                    fill: "#000",
+                });
                 gametitle = this.sound.add("gametitle", {
                     mute: false,
                     volume: 0.3,
@@ -295,6 +300,8 @@
                 if (!isTeig && !isKaese) {
                     teig.disableBody(true, true);
                     pickItem.play();
+                    score += 10;
+                    scoreText.setText("Teig: " + score);
                     if (isFertig()) {
                         teig.destroy();
                     }
