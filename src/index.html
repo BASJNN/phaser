@@ -26,7 +26,12 @@
 
     function preload ()
     {
-        this.load.setBaseURL('http://labs.phaser.io');
+        this.load.setBaseURL('http://localhost:8000');
+
+        this.load.image('teig', 'graphics/Teig.png');
+        this.load.image('salami', 'graphics/Salami.png');
+        this.load.image('pizza_salami', 'graphics/Pizza Salami');
+        this.load.image('teig_tomate', 'graphics/Teig Tomate 2.png');
 
         this.load.image('sky', 'assets/skies/space3.png');
         this.load.image('logo', 'assets/sprites/phaser3-logo.png');
@@ -53,6 +58,8 @@
 
         emitter.startFollow(logo);
     }
+
+
     </script>
 
 </body>
