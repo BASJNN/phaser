@@ -18,7 +18,8 @@
         },
         scene: {
             preload: preload,
-            create: create
+            create: create,
+        	update: update
         }
     };
 
@@ -40,26 +41,56 @@
 
     function create ()
     {
-        this.add.image(400, 300, 'sky');
+		playerOne = this.physics.add.sprite(100, 450, 'playOne');
+		playerTwo = this.physics.add.sprite(100, 450, 'playerTwo');
 
-        var particles = this.add.particles('red');
+		playerOne.setCollideWorldBounds(true);
+		playerTwo.setCollideWorldBounds(true);
+    }
 
-        var emitter = particles.createEmitter({
-            speed: 100,
-            scale: { start: 1, end: 0 },
-            blendMode: 'ADD'
-        });
+	function update() {
+		playerOneControl = this.input.keyboard.createCursorKeys();
+  		keys = this.input.keyboard.addKeys("W,A,S,D");
 
-        var logo = this.physics.add.image(400, 100, 'logo');
 
-        logo.setVelocity(100, 200);
-        logo.setBounce(1, 1);
-        logo.setCollideWorldBounds(true);
+		// Player One
+		if (playerOneControl.left.isDown)
+		{
+			playerOne.setVelocityX(-160);
+		}
+		else if (playerOneControl.right.isDown)
+		{
+			playerOne.setVelocityX(160);
+		}
+		else
+		{
+			playerOne.setVelocityX(0);
+		}
+		if (playerOneControl.up.isDown && playerOne.body.touching.down)
+		{
+			playerOne.setVelocityY(-330);
+		}
 
+<<<<<<< Updated upstream
         emitter.startFollow(logo);
     }
 
 
+=======
+		// Player Two
+		if (keys.A.isDown) {
+			playerTwo.setVelocityX(-300);
+		} else if (keys.D.isDown) {
+			playerTwo.setVelocityX(300);
+		}
+
+		if (keys.W.isDown) {
+			playerTwo.setVelocityY(-300);
+		} else if (keys.S.isDown) {
+			playerTwo.setVelocityY(300);
+		}
+	}
+>>>>>>> Stashed changes
     </script>
 
 </body>
