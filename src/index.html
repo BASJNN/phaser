@@ -33,11 +33,16 @@
     var isTeig = false;
     var isTomato = false;
 
+    var pizzaStep = 0;
+
     function preload ()
     {
         // this.load.setBaseURL('http://localhost:8080');
         this.load.image('ofen', 'assets/Ofen.png');
         this.load.image('tischempty', 'assets/tisch_leer.png');
+        this.load.image('tischteig', 'assets/TischMitPizzaLeer.png');
+        this.load.image('tischsalami', 'assets/TischMitPizzaSalami.png');
+        this.load.image('tischtomate', 'assets/TischMitPizzaTomate.png');
         this.load.image('teig', 'assets/Teig.png');
         this.load.image('parkett', 'assets/parkett.png');
         this.load.image('salami', 'assets/Salami.png');
@@ -94,8 +99,8 @@
         this.physics.add.overlap(playerOne, ofen, pizzaAbgeben, null, this);
         this.physics.add.overlap(playerTwo, ofen, pizzaAbgeben, null, this);
 
-        this.physics.add.overlap(playerOne, tisch, pizzaPrep, "1");
-        this.physics.add.overlap(playerTwo, tisch, pizzaPrep, "1");
+        this.physics.add.overlap(playerOne, tisch, pizzaPrep, null, this);
+        this.physics.add.overlap(playerTwo, tisch, pizzaPrep, null, this);
     }
 
     function update() {
@@ -257,10 +262,16 @@
         }
     }
 
-    function pizzaPrep(step) {}
-        switch (step) {
+    function pizzaPrep(player, step) {}
+        switch (pizzaStep) {
+            case 0:
+                if(isTeig) {
+                    pizzaStep = 1;
+                }
+                break;
             // Teig
             case 1:
+                pizzaStep = 2;
                 isTeig = true;
                 tisch = this.physics.add.image(650, 200, 'tischempty');
                 tisch.setScale(0.3);
@@ -269,6 +280,7 @@
                 break;
             // Tomato
             case 2:
+                pizzaStep = 3;
                 isTomato = true;
                 tisch = this.physics.add.image(650, 200, 'tischempty');
                 tisch.setScale(0.3);
@@ -277,6 +289,7 @@
                 break;
             // Salami
             case 3:
+                pizzaStep = 4;
                 isSalami = true;
                 tisch = this.physics.add.image(650, 200, 'tischempty');
                 tisch.setScale(0.3);
@@ -285,6 +298,7 @@
                 break;
             // Käse
             case 4:
+                pizzaStep = 1;
                 isTeig = false;
                 isTomato = false;
                 isSalami = false;
