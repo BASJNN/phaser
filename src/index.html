@@ -1,29 +1,30 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
-    </head>
-    <body>
-        <script>
-            var config = {
-                type: Phaser.AUTO,
-                input: {
-                    queue: true,
-                },
-                width: 800,
-                height: 600,
-                physics: {
-                    default: "arcade",
-                    arcade: {
-                        debug: true,
-                    },
-                },
-                scene: {
-                    preload: preload,
-                    create: create,
-                    update: update,
-                },
-            };
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+</head>
+<body>
+
+<script>
+    var config = {
+        type: Phaser.AUTO,
+        input: {
+            queue: true
+        },
+        width: 800,
+        height: 600,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                debug: false
+            }
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
 
             var game = new Phaser.Game(config);
 
@@ -34,7 +35,7 @@
             var scoreText;
             var score = 0;
 
-            var pizzaStep = 0;
+            var pizzaStep = 1;
             var pickItem;
             var gametitle;
             var dropItem;
@@ -51,7 +52,8 @@
                     "tischtomate",
                     "assets/TischMitPizzaTomate.png"
                 );
-                this.load.image("teig", "assets/Teig.png");
+                this.load.image('tischfertig', 'assets/TischMitPizzaFertig.png');
+        this.load.image("teig", "assets/Teig.png");
                 this.load.image("parkett", "assets/parkett.png");
                 this.load.image("salami", "assets/Salami.png");
                 this.load.image("kaese", "assets/Käse.png");
@@ -104,8 +106,8 @@
                 ofen = this.physics.add.image(100, 80, "ofen");
                 ofen.setScale(0.3);
 
-                tisch = this.physics.add.image(650, 200, "tischempty");
-                tisch.setScale(0.3);
+        tisch = this.physics.add.image(650, 200, 'tischfertig');
+        tisch.setScale(0.3);
 
                 playerOne = this.physics.add.sprite(300, 200, "playerOne");
                 playerOne.setScale(0.1);
@@ -189,21 +191,12 @@
                     this
                 );
 
-                this.physics.add.overlap(
-                    playerOne,
-                    tisch,
-                    pizzaPrep,
-                    null,
-                    this
-                );
-                this.physics.add.overlap(
-                    playerTwo,
-                    tisch,
-                    pizzaPrep,
-                    null,
-                    this
-                );
-            }
+        this.physics.add.overlap(playerOne, ofen, pizzaAbgeben, null, this);
+        this.physics.add.overlap(playerTwo, ofen, pizzaAbgeben, null, this);
+
+        // this.physics.add.overlap(playerOne, tisch, pizzaPrep, null, this);
+        // this.physics.add.overlap(playerTwo, tisch, pizzaPrep, null, this);
+    }
 
             function update() {
                 moveKeys = this.input.keyboard.addKeys({
@@ -286,44 +279,39 @@
                 return Math.floor(Math.random() * 500);
             }
 
-            function collectSalami(player, salami) {
-                if (isTomato && !isSalami) {
-                    isSalami = true;
-                    salami.disableBody(true, true);
-                    pickItem.play();
-                    if (isFertig()) {
-                        salami.destroy();
-                    }
-                }
+    function collectSalami (player, salami)
+    {
+        isSalami = true;
+            salami.disableBody(true, true);
+            if(isFertig()) {
+                salami.destroy()
             }
-            function collectTeig(player, teig) {
-                if (!isTeig && !isKaese) {
-                    teig.disableBody(true, true);
-                    pickItem.play();
-
-                    if (isFertig()) {
-                        teig.destroy();
-                    }
-                }
+    }
+    function collectTeig (player, teig)
+    {
+        isTeig = true;
+            isTeig = true;
+            teig.disableBody(true, true);
+            if(isFertig()) {
+                teig.destroy()
             }
-            function collectKaese(player, kaese) {
-                if (isTeig && !isKaese) {
-                    kaese.disableBody(true, true);
-                    pickItem.play();
-                    if (isFertig()) {
-                        kaese.destroy();
-                    }
-                }
+    }
+    function collectKaese (player, kaese)
+    {
+        isKaese = true;
+            kaese.disableBody(true, true);
+            if(isFertig()) {
+                kaese.destroy()
             }
-            function collectTomato(player, tomato) {
-                if (!isTomato && !isSalami) {
-                    tomato.disableBody(true, true);
-                    pickItem.play();
-                    if (isFertig()) {
-                        tomato.destroy();
-                    }
-                }
+    }
+    function collectTomato (player, tomato)
+    {
+        isTomato = true;
+            tomato.disableBody(true, true);
+            if(isFertig()) {
+                tomato.destroy()
             }
+    }
 
             function isFertig() {
                 if (isSalami && isKaese && isTeig && isTomato) {
@@ -400,53 +388,64 @@
                 }
             }
 
-            function pizzaPrep(player, step) {}
-            switch (pizzaStep) {
-                case 0:
-                    if (isTeig) {
-                        pizzaStep = 1;
-                    }
-                    break;
-                // Teig
-                case 1:
-                    pizzaStep = 2;
-                    isTeig = true;
-                    tisch = this.physics.add.image(650, 200, "tischempty");
-                    tisch.setScale(0.3);
-                    this.physics.add.overlap(playerOne, tisch, pizzaPrep, 2);
-                    this.physics.add.overlap(playerTwo, tisch, pizzaPrep, 2);
-                    break;
-                // Tomato
-                case 2:
-                    pizzaStep = 3;
-                    isTomato = true;
-                    tisch = this.physics.add.image(650, 200, "tischempty");
-                    tisch.setScale(0.3);
-                    this.physics.add.overlap(playerOne, tisch, pizzaPrep, 3);
-                    this.physics.add.overlap(playerTwo, tisch, pizzaPrep, 3);
-                    break;
-                // Salami
-                case 3:
-                    pizzaStep = 4;
-                    isSalami = true;
-                    tisch = this.physics.add.image(650, 200, "tischempty");
-                    tisch.setScale(0.3);
-                    this.physics.add.overlap(playerOne, tisch, pizzaPrep, 4);
-                    this.physics.add.overlap(playerTwo, tisch, pizzaPrep, 4);
-                    break;
-                // Käse
-                case 4:
+    function pizzaPrep(player, step) {
+        switch (pizzaStep) {
+            case 0:
+                console.log("1")
+                if(!isTeig) {
                     pizzaStep = 1;
-                    isTeig = false;
-                    isTomato = false;
-                    isSalami = false;
-                    isKaese = false;
-                    tisch = this.physics.add.image(650, 200, "tischempty");
-                    tisch.setScale(0.3);
-                    this.physics.add.overlap(playerOne, tisch, pizzaPrep, 1);
-                    this.physics.add.overlap(playerTwo, tisch, pizzaPrep, 1);
-                    break;
-            }
-        </script>
-    </body>
+                }
+                break;
+            // Teig
+            case 1:
+                console.log("1")
+                if(!isTeig) { return false;}
+                pizzaStep = 2;
+                isTeig = true;
+                tisch = this.physics.add.image(650, 200, 'tischteig');
+                tisch.setScale(0.3);
+                this.physics.add.overlap(playerOne, tisch, pizzaPrep, null, true);
+                this.physics.add.overlap(playerTwo, tisch, pizzaPrep, null, true);
+                break;
+            // Tomato
+            case 2:
+                console.log("2")
+                if(isTeig) { return false;}
+                pizzaStep = 3;
+                isTomato = true;
+                tisch = this.physics.add.image(650, 200, 'tischtomate');
+                tisch.setScale(0.3);
+                this.physics.add.overlap(playerOne, tisch, pizzaPrep, null, true);
+                this.physics.add.overlap(playerTwo, tisch, pizzaPrep, null, true);
+                break;
+            // Salami
+            case 3:
+                console.log("3")
+                if(!isTomato) { return false;}
+                pizzaStep = 4;
+                isSalami = true;
+                // tisch = this.physics.add.image(650, 200, 'tischempty');
+                // tisch.setScale(0.3);
+                // this.physics.add.overlap(playerOne, tisch, pizzaPrep, 4);
+                // this.physics.add.overlap(playerTwo, tisch, pizzaPrep, 4);
+                break;
+            // Käse
+            case 4:
+                console.log("4")
+                if(!isSalami) { return false;}
+                pizzaStep = 1;
+                isTeig = false;
+                isTomato = false;
+                isSalami = false;
+                isKaese = false;
+                // tisch = this.physics.add.image(650, 200, 'tischempty');
+                // tisch.setScale(0.3);
+                // this.physics.add.overlap(playerOne, tisch, pizzaPrep, 1);
+                // this.physics.add.overlap(playerTwo, tisch, pizzaPrep, 1);
+                break;
+        }
+    }
+</script>
+
+</body>
 </html>
