@@ -8,13 +8,16 @@
     <script>
     var config = {
         type: Phaser.AUTO,
+		input: {
+			queue: true
+		},
         width: 800,
         height: 600,
         physics: {
             default: 'arcade',
-            arcade: {
-                gravity: { y: 200 }
-            }
+			arcade: {
+				debug: true
+			}
         },
         scene: {
             preload: preload,
@@ -46,43 +49,89 @@
 
 		playerOne.setCollideWorldBounds(true);
 		playerTwo.setCollideWorldBounds(true);
+
+		cursorKeys = this.input.keyboard.createCursorKeys();
     }
 
 	function update() {
-		playerOneControl = this.input.keyboard.createCursorKeys();
-  		keys = this.input.keyboard.addKeys("W,A,S,D");
+		moveKeys = this.input.keyboard.addKeys({
+			'W': Phaser.Input.Keyboard.KeyCodes.W,
+			'S': Phaser.Input.Keyboard.KeyCodes.S,
+			'A': Phaser.Input.Keyboard.KeyCodes.A,
+			'D': Phaser.Input.Keyboard.KeyCodes.D,
+			'up': Phaser.Input.Keyboard.KeyCodes.Up,
+			'down': Phaser.Input.Keyboard.KeyCodes.Down,
+			'left': Phaser.Input.Keyboard.KeyCodes.Left,
+			'right': Phaser.Input.Keyboard.KeyCodes.Right,
+		});
 
+		this.input.keyboard.on('keydown_W', function (event) {
+			playerOne.setAccelerationY(-800);
+		});
+		this.input.keyboard.on('keydown_S', function (event) {
+			playerOne.setAccelerationY(800);
+		});
+		this.input.keyboard.on('keydown_A', function (event) {
+			playerOne.setAccelerationX(-800);
+		});
+		this.input.keyboard.on('keydown_D', function (event) {
+			playerOne.setAccelerationX(800);
+		});
 
-		// Player One
-		if (playerOneControl.left.isDown)
-		{
-			playerOne.setVelocityX(-160);
-		}
-		else if (playerOneControl.right.isDown)
-		{
-			playerOne.setVelocityX(160);
-		}
-		else
-		{
+		this.input.keyboard.on('keydown_UP', function (event) {
+			playerTwo.setAccelerationY(-800);
+		});
+		this.input.keyboard.on('keydown_DOWN', function (event) {
+			playerTwo.setAccelerationY(800);
+		});
+		this.input.keyboard.on('keydown_LEFT', function (event) {
+			playerTwo.setAccelerationX(-800);
+		});
+		this.input.keyboard.on('keydown_RIGHT', function (event) {
+			playerTwo.setAccelerationX(800);
+		});
+
+		this.input.keyboard.on('keyup_W', function (event) {
+			if (moveKeys['S'].isUp)
+			playerOne.setAccelerationY(0);
+			playerOne.setVelocityY(0);
+		});
+		this.input.keyboard.on('keyup_S', function (event) {
+			if (moveKeys['W'].isUp)
+			playerOne.setAccelerationY(0);
+			playerOne.setVelocityY(0);
+		});
+		this.input.keyboard.on('keyup_A', function (event) {
+			if (moveKeys['D'].isUp)
+			playerOne.setAccelerationX(0);
 			playerOne.setVelocityX(0);
-		}
-		if (playerOneControl.up.isDown && playerOne.body.touching.down)
-		{
-			playerOne.setVelocityY(-330);
-		}
+		});
+		this.input.keyboard.on('keyup_D', function (event) {
+			if (moveKeys['A'].isUp)
+			playerOne.setAccelerationX(0);
+			playerOne.setVelocityX(0);
+		});
 
-		// Player Two
-		if (keys.A.isDown) {
-			playerTwo.setVelocityX(-300);
-		} else if (keys.D.isDown) {
-			playerTwo.setVelocityX(300);
-		}
-
-		if (keys.W.isDown) {
-			playerTwo.setVelocityY(-300);
-		} else if (keys.S.isDown) {
-			playerTwo.setVelocityY(300);
-		}
+		this.input.keyboard.on('keyup_UP', function (event) {
+			if (moveKeys['down'].isUp)
+			playerTwo.setAccelerationY(0);
+			playerTwo.setVelocityY(0);
+		});
+		this.input.keyboard.on('keyup_DOWN', function (event) {
+			if (moveKeys['up'].isUp)
+			playerTwo.setAccelerationY(0);
+			playerTwo.setVelocityY(0);
+		});
+		this.input.keyboard.on('keyup_LEFT', function (event) {
+			if (moveKeys['right'].isUp)
+			playerTwo.setAccelerationX(0);
+			playerTwo.setVelocityX(0);
+		});
+		this.input.keyboard.on('keyup_RIGHT', function (event) {
+			if (moveKeys['left'].isUp)
+			playerTwo.setAccelerationX(0);
+			playerTwo.setVelocityX(0);
+		});
 	}
     </script>
 
