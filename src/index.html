@@ -28,14 +28,22 @@
 
     var game = new Phaser.Game(config);
 
+    var isSalami = false;
+    var isKaese = false;
+    var isTeig = false;
+    var isTomato = false;
+
     function preload ()
     {
         // this.load.setBaseURL('http://localhost:8080');
+        this.load.image('ofen', 'assets/Ofen.png');
+        this.load.image('tisch', 'assets/Ofen.png');
         this.load.image('teig', 'assets/Teig.png');
         this.load.image('parkett', 'assets/parkett.png');
         this.load.image('salami', 'assets/Salami.png');
-        this.load.image('pizza_salami', 'assets/Pizza_Salami');
-        this.load.image('teig_tomate', 'assets/Teig_Tomate_2.png');
+        this.load.image('kaese', 'assets/Käse.png');
+        this.load.image('pizza_salami', 'assets/Pizza_Salami.png');
+        this.load.image('tomato', 'assets/Tomate.png');
 
         // this.load.spritesheet('playerOne', 'assets/Maennchen1.png', { frameWidth: 32, frameHeight: 48 });
         this.load.image('playerOne', 'assets/Maennchen1.png');
@@ -49,15 +57,42 @@
     {
         this.add.image(400, 300, 'parkett');
 
-        playerOne = this.physics.add.sprite(100, 100, 'playerOne');
+        ofen = this.physics.add.image(100, 80, 'ofen');
+        ofen.setScale(0.3);
+
+        // ofen = this.physics.add.image(100, 80, 'ofen');
+        // ofen.setScale(0.3);
+
+        playerOne = this.physics.add.sprite(300, 200, 'playerOne');
         playerOne.setScale(0.1);
-        playerTwo = this.physics.add.sprite(200, 200, 'playerTwo');;
+        playerTwo = this.physics.add.sprite(500, 200, 'playerTwo');;
         playerTwo.setScale(0.1);
 
         playerOne.setCollideWorldBounds(true);
         playerTwo.setCollideWorldBounds(true);
 
         cursorKeys = this.input.keyboard.createCursorKeys();
+
+        salami = this.physics.add.image(xCoordinationsforItems(), yCoordinationsforItems(), 'salami');
+        salami.setScale(0.1);
+
+        tomato = this.physics.add.image(xCoordinationsforItems(), yCoordinationsforItems(), 'tomato');
+        tomato.setScale(0.1);
+
+        kaese = this.physics.add.image(xCoordinationsforItems(), yCoordinationsforItems(), 'kaese');
+        kaese.setScale(0.1);
+
+        teig = this.physics.add.image(xCoordinationsforItems(), yCoordinationsforItems(), 'teig');
+        teig.setScale(0.1);
+
+
+        this.physics.add.overlap(playerOne, tomato, collectTomato, null, this);
+        this.physics.add.overlap(playerOne, teig, collectTeig, null, this);
+        this.physics.add.overlap(playerTwo, kaese, collectKaese, null, this);
+        this.physics.add.overlap(playerTwo, salami, collectSalami, null, this);
+
+        this.physics.add.overlap(playerOne, ofen, pizzaAbgeben, null, this);
+        this.physics.add.overlap(playerTwo, ofen, pizzaAbgeben, null, this);
     }
 
     function update() {
@@ -139,6 +174,80 @@
                 playerTwo.setAccelerationX(0);
             playerTwo.setVelocityX(0);
         });
+    }
+
+    function xCoordinationsforItems() {
+        return Math.floor(Math.random() * 700);
+    }
+
+    function yCoordinationsforItems() {
+        return Math.floor(Math.random() * 500);
+    }
+
+    function collectSalami (player, salami)
+    {
+        isSalami = true;
+        salami.disableBody(true, true);
+        if(isFertig()) {
+            salami.destroy()
+        }
+    }
+    function collectTeig (player, teig)
+    {
+        isTeig = true;
+        teig.disableBody(true, true);
+        if(isFertig()) {
+            teig.destroy()
+        }
+    }
+    function collectKaese (player, kaese)
+    {
+        isKaese = true;
+        kaese.disableBody(true, true);
+        if(isFertig()) {
+            kaese.destroy()
+        }
+    }
+    function collectTomato (player, tomato)
+    {
+        isTomato = true;
+        tomato.disableBody(true, true);
+        if(isFertig()) {
+            tomato.destroy()
+        }
+    }
+
+    function isFertig() {
+        if (isSalami && isKaese && isTeig && isTomato){
+            return true;
+        } return false;
+    }
+
+    function pizzaAbgeben() {
+        console.log("dasdas")
+        if(isFertig()) {
+            isTeig = false;
+            isTomato = false;
+            isSalami = false;
+            isKaese = false;
+
+            salami = this.physics.add.image(xCoordinationsforItems(), yCoordinationsforItems(), 'salami');
+            salami.setScale(0.1);
+
+            tomato = this.physics.add.image(xCoordinationsforItems(), yCoordinationsforItems(), 'tomato');
+            tomato.setScale(0.1);
+
+            kaese = this.physics.add.image(xCoordinationsforItems(), yCoordinationsforItems(), 'kaese');
+            kaese.setScale(0.1);
+
+            teig = this.physics.add.image(xCoordinationsforItems(), yCoordinationsforItems(), 'teig');
+            teig.setScale(0.1);
+
+            this.physics.add.overlap(playerOne, tomato, collectTomato, null, this);
+            this.physics.add.overlap(playerOne, teig, collectTeig, null, this);
+            this.physics.add.overlap(playerTwo, kaese, collectKaese, null, this);
+            this.physics.add.overlap(playerTwo, salami, collectSalami, null, this);
+        }
     }
 </script>
 
