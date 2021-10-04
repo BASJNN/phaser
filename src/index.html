@@ -37,7 +37,7 @@
     {
         // this.load.setBaseURL('http://localhost:8080');
         this.load.image('ofen', 'assets/Ofen.png');
-        this.load.image('tisch', 'assets/Ofen.png');
+        this.load.image('tischempty', 'assets/tisch_leer.png');
         this.load.image('teig', 'assets/Teig.png');
         this.load.image('parkett', 'assets/parkett.png');
         this.load.image('salami', 'assets/Salami.png');
@@ -60,12 +60,12 @@
         ofen = this.physics.add.image(100, 80, 'ofen');
         ofen.setScale(0.3);
 
-        // ofen = this.physics.add.image(100, 80, 'ofen');
-        // ofen.setScale(0.3);
+        tisch = this.physics.add.image(650, 200, 'tischempty');
+        tisch.setScale(0.3);
 
         playerOne = this.physics.add.sprite(300, 200, 'playerOne');
         playerOne.setScale(0.1);
-        playerTwo = this.physics.add.sprite(500, 200, 'playerTwo');;
+        playerTwo = this.physics.add.sprite(300, 400, 'playerTwo');;
         playerTwo.setScale(0.1);
 
         playerOne.setCollideWorldBounds(true);
@@ -86,13 +86,16 @@
         teig.setScale(0.1);
 
 
-        this.physics.add.overlap(playerOne, tomato, collectTomato, null, this);
         this.physics.add.overlap(playerOne, teig, collectTeig, null, this);
-        this.physics.add.overlap(playerTwo, kaese, collectKaese, null, this);
+        this.physics.add.overlap(playerOne, kaese, collectKaese, null, this);
+        this.physics.add.overlap(playerTwo, tomato, collectTomato, null, this);
         this.physics.add.overlap(playerTwo, salami, collectSalami, null, this);
 
         this.physics.add.overlap(playerOne, ofen, pizzaAbgeben, null, this);
         this.physics.add.overlap(playerTwo, ofen, pizzaAbgeben, null, this);
+
+        this.physics.add.overlap(playerOne, tisch, pizzaPrep, "1");
+        this.physics.add.overlap(playerTwo, tisch, pizzaPrep, "1");
     }
 
     function update() {
@@ -186,34 +189,39 @@
 
     function collectSalami (player, salami)
     {
-        isSalami = true;
-        salami.disableBody(true, true);
-        if(isFertig()) {
-            salami.destroy()
+        if(isTomato && !isSalami) {
+            isSalami = true;
+            salami.disableBody(true, true);
+            if(isFertig()) {
+                salami.destroy()
+            }
         }
     }
     function collectTeig (player, teig)
     {
-        isTeig = true;
-        teig.disableBody(true, true);
-        if(isFertig()) {
-            teig.destroy()
+        if(!isTeig && !isKaese) {
+            teig.disableBody(true, true);
+            if(isFertig()) {
+                teig.destroy()
+            }
         }
     }
     function collectKaese (player, kaese)
     {
-        isKaese = true;
-        kaese.disableBody(true, true);
-        if(isFertig()) {
-            kaese.destroy()
+        if(isTeig && !isKaese) {
+            kaese.disableBody(true, true);
+            if(isFertig()) {
+                kaese.destroy()
+            }
         }
     }
     function collectTomato (player, tomato)
     {
-        isTomato = true;
-        tomato.disableBody(true, true);
-        if(isFertig()) {
-            tomato.destroy()
+        if(!isTomato && !isSalami) {
+            tomato.disableBody(true, true);
+            if(isFertig()) {
+                tomato.destroy()
+            }
         }
     }
 
@@ -224,7 +232,6 @@
     }
 
     function pizzaAbgeben() {
-        console.log("dasdas")
         if(isFertig()) {
             isTeig = false;
             isTomato = false;
@@ -243,12 +250,51 @@
             teig = this.physics.add.image(xCoordinationsforItems(), yCoordinationsforItems(), 'teig');
             teig.setScale(0.1);
 
-            this.physics.add.overlap(playerOne, tomato, collectTomato, null, this);
             this.physics.add.overlap(playerOne, teig, collectTeig, null, this);
-            this.physics.add.overlap(playerTwo, kaese, collectKaese, null, this);
+            this.physics.add.overlap(playerOne, kaese, collectKaese, null, this);
+            this.physics.add.overlap(playerTwo, tomato, collectTomato, null, this);
             this.physics.add.overlap(playerTwo, salami, collectSalami, null, this);
         }
     }
+
+    function pizzaPrep(step) {}
+        switch (step) {
+            // Teig
+            case 1:
+                isTeig = true;
+                tisch = this.physics.add.image(650, 200, 'tischempty');
+                tisch.setScale(0.3);
+                this.physics.add.overlap(playerOne, tisch, pizzaPrep, 2);
+                this.physics.add.overlap(playerTwo, tisch, pizzaPrep, 2);
+                break;
+            // Tomato
+            case 2:
+                isTomato = true;
+                tisch = this.physics.add.image(650, 200, 'tischempty');
+                tisch.setScale(0.3);
+                this.physics.add.overlap(playerOne, tisch, pizzaPrep, 3);
+                this.physics.add.overlap(playerTwo, tisch, pizzaPrep, 3);
+                break;
+            // Salami
+            case 3:
+                isSalami = true;
+                tisch = this.physics.add.image(650, 200, 'tischempty');
+                tisch.setScale(0.3);
+                this.physics.add.overlap(playerOne, tisch, pizzaPrep, 4);
+                this.physics.add.overlap(playerTwo, tisch, pizzaPrep, 4);
+                break;
+            // Käse
+            case 4:
+                isTeig = false;
+                isTomato = false;
+                isSalami = false;
+                isKaese = false;
+                tisch = this.physics.add.image(650, 200, 'tischempty');
+                tisch.setScale(0.3);
+                this.physics.add.overlap(playerOne, tisch, pizzaPrep, 1);
+                this.physics.add.overlap(playerTwo, tisch, pizzaPrep, 1);
+                break;
+        }
 </script>
 
 </body>
